@@ -8,6 +8,7 @@ const SOCKET_URL = 'http://localhost:4000';
 function App() {
   const canvasRef = useRef(null);
   const socketRef = useRef(null);
+  const containerRef = useRef(null); // Ref for fullscreen
   const [isConnected, setIsConnected] = useState(false);
   const [isSessionActive, setIsSessionActive] = useState(false);
   const [inputUrl, setInputUrl] = useState('https://www.google.com');
@@ -56,6 +57,16 @@ function App() {
       }
     };
   }, []);
+
+  const toggleFullScreen = () => {
+    if (!document.fullscreenElement) {
+        containerRef.current?.requestFullscreen().catch(err => {
+            console.error(`Error attempting to enable fullscreen: ${err.message}`);
+        });
+    } else {
+        document.exitFullscreen();
+    }
+  };
 
   // ... (Mouse/Keyboard Handlers remain the same, just ensure they check socketRef.current)
   const handleMouseMove = (e) => {
@@ -148,6 +159,11 @@ function App() {
             <button onClick={() => handleNavigate('reload')} className="bg-gray-700 hover:bg-gray-600 text-white p-2 rounded-full transition-colors" title="Reload">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" /></svg>
             </button>
+            <button onClick={toggleFullScreen} className="bg-gray-700 hover:bg-gray-600 text-white p-2 rounded-full transition-colors" title="Toggle Fullscreen">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9M20.25 20.25h-4.5m4.5 0v-4.5m0 4.5L15 15" />
+                </svg>
+            </button>
         </div>
 
         {/* URL Display Area */}
@@ -158,7 +174,7 @@ function App() {
         <h1 className="text-xl font-bold text-gray-300 hidden md:block">RBI PoC</h1>
       </div>
 
-      <div className="relative w-full flex-1 flex items-center justify-center border-2 border-gray-700 rounded-lg overflow-hidden shadow-2xl bg-black">
+      <div ref={containerRef} className="relative w-full flex-1 flex items-center justify-center border-2 border-gray-700 rounded-lg overflow-hidden shadow-2xl bg-black">
         {!isConnected && (
             <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-75 z-10">
                 <span className="text-xl">Connecting to remote browser...</span>
