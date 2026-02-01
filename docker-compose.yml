@@ -22,6 +22,9 @@ services:
       - TOKEN=SECRET_TOKEN
     depends_on:
       - browserless
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
 
   frontend:
     build: ./frontend

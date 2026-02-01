@@ -1,4 +1,7 @@
-FROM node:18-alpine
+FROM node:18-bullseye
+
+# Install FFmpeg for video recording
+RUN apt-get update && apt-get install -y ffmpeg
 
 WORKDIR /app
 
