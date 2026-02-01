@@ -1,0 +1,29 @@
+version: "3.8"
+
+services:
+  browserless:
+    image: ghcr.io/browserless/chrome:latest
+    ports:
+      - "3000:3000"
+    environment:
+      - MAX_CONCURRENT_SESSIONS=5
+      - TOKEN=SECRET_TOKEN
+      - STEALTH_PLUGIN=true
+      - TIMEOUT=3600000
+      - KEEP_ALIVE=true
+    restart: always
+
+  backend:
+    build: ./backend
+    ports:
+      - "4000:4000"
+    environment:
+      - BROWSER_WS=ws://browserless:3000/chrome
+      - TOKEN=SECRET_TOKEN
+    depends_on:
+      - browserless
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "8080:80"
